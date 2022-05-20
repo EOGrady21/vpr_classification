@@ -5,6 +5,7 @@ import keras
 from tensorflow.keras import activations
 
 
+
 # set up some model params
 BATCH_SIZE = 32
 IMG_SIZE = (299, 299)
@@ -83,6 +84,7 @@ model.save('C:/Users/ChisholmE/PycharmProjects/vpr_classification/ringstudy_mode
            save_format='h5')
 model.save('ringstudy_model')
 
+
 # plot learning curves
 
 acc = history.history['accuracy']
@@ -113,10 +115,29 @@ plt.show()
 
 
 
+# load SavedModel back in
+from keras.models import load_model
+model = load_model('ringstudy_model')
+# summarize model.
+model.summary()
 
+# test model
+test_dir='C:/Users/ChisholmE/Documents/GitHub/vpr_transferlearn/ringstudy_test'
+test_ds= tf.keras.utils.image_dataset_from_directory(
+  test_dir,
+  seed=123,
+  image_size=IMG_SIZE,
+  batch_size=BATCH_SIZE)
 
+model.evaluate(test_ds)
 
+# use model to generate predictions on test data
+res=model.predict(test_ds)
 
+# interpret results
+pred_ind = np.argmax(res, axis=1)
+# sort_class = sorted(class_names)
+class_names = test_ds.class_names
+pred_class = class_names[pred_ind[0]]
 
-
-
+# class_names[np.argmax(res[0])]
